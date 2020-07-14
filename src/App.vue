@@ -1,39 +1,71 @@
 <template>
-  <div>
-    <h1>{{ titulo }}</h1>
+<div class="corpo">
+    <h1 class="centralizado">{{ titulo }}</h1>
+        <input type="search" class="filtro" placeholder="filtre pelo título da foto">
 
-    <ul>
-      <li v-for="foto of fotos">
-        <img :src="foto.url" :alt="foto.titulo">
-      </li>
+    <ul class="lista-fotos">
+        <li class="lista-fotos-item" v-for="foto of fotos" v-bind:key="foto">
+            <meu-painel :titulo="foto.titulo">
+                <img class="imagem-responsiva" :src="foto.url" :alt="foto.titulo">
+            </meu-painel>
+        </li>
     </ul>
 
-  </div>
+</div>
 </template>
 
 <script>
+import Painel from './components/shared/painel/Painel.vue'
+
 export default {
 
-  data() {
+    components: {
 
-    return {
+        'meu-painel': Painel
 
-      titulo: 'Alurapic', 
-      fotos: [
-        {
-          url: 'http://tudosobrecachorros.com.br/wp-content/uploads/cachorro-independente.jpg',
-          titulo: 'cachorro'
-        },
-        {
-          url: 'http://tudosobrecachorros.com.br/wp-content/uploads/cachorro-independente.jpg',
-          titulo: 'Cachorrão'
+    },
+    data() {
+
+        return {
+
+            titulo: 'Alurapic',
+            fotos: []
         }
-      ]
+    },
+    created() {
+        this.$http.get('http://localhost:3000/v1/fotos')
+            .then(res => res.json())
+            .then(fotos => this.fotos = fotos, err => console.log(err))
     }
-  }
 }
-
 </script>
 
 <style>
+.centralizado {
+    text-align: center;
+}
+
+.corpo {
+    font-family: Helvetica, sans-serif;
+    margin: 0 auto;
+    width: 96%;
+}
+
+.lista-fotos {
+    list-style: none;
+}
+
+.lista-fotos .lista-fotos-item {
+    display: inline-block;
+
+}
+
+.imagem-responsiva {
+    width: 100%;
+}
+.filtro {
+    display: block;
+    width: 100%;
+  }
 </style>
+
